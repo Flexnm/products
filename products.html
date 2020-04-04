@@ -23,6 +23,12 @@
             font-size: 14pt;
         }
 
+        #page {
+            display: grid;
+            grid-template-columns: min-content max-content;
+            column-gap: 10px;
+        }
+
         #masterList {
             display: grid;
             grid-template-columns: max-content;
@@ -34,12 +40,6 @@
             background-color: rgb(236, 139, 139);
             text-align: center;
             font-size: 18pt;
-        }
-
-        #page {
-            display: grid;
-            grid-template-columns: min-content max-content;
-            column-gap: 10px;
         }
 
         #cart {
@@ -114,9 +114,17 @@
                         if (i === "Category") {
                             newD.innerHTML = newD.innerHTML[0].toUpperCase() + newD.innerHTML.slice(1);
                         }
+                        if(i === "Description"){
+                            if(item[i].length > 10){
+                                let dispText = newD.innerHTML.slice(0, 8);
+                                newD.title = newD.innerHTML;
+                                newD.innerHTML = dispText + "...";
+                            }
+                        }
                         document.getElementById("list").appendChild(newD);
                     }
                 }
+                
                 let checker = document.createElement("div");
                 checker.innerHTML = `<input id="check${ID}" type="checkbox" name="to buy" value="to buy" onchange="change(this.id)" />`;
                 checker.className = `product${ID}`
@@ -256,9 +264,9 @@
             for (let i = 0; i < selectors.item(0).length; i++) {
                 if (selectors.item(0).item(i).value === newCat) {
                     document.getElementById("newCat").value = "";
-                    document.getElementById("newCat").setAttribute("placeholder","ADD NEW CATEGORY!");
-                    setTimeout(function() {
-                        document.getElementById("newCat").setAttribute("placeholder","Add new category");
+                    document.getElementById("newCat").setAttribute("placeholder", "ADD NEW CATEGORY!");
+                    setTimeout(function () {
+                        document.getElementById("newCat").setAttribute("placeholder", "Add new category");
                     }, 1000);
                     return;
                 }
@@ -326,7 +334,7 @@
                 <option value="food">Food</option>
                 <option value="drink">Drink</option>
             </select>
-            <input id="newCat" type="text" placeholder="Add new category"  />
+            <input id="newCat" type="text" placeholder="Add new category" />
             <input type="button" value="add category"
                 onclick="addNewCat(document.getElementById('newCat').value.toLowerCase())" />
             <br />
