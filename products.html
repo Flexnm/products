@@ -106,6 +106,9 @@
                 ID++;
                 let item = new Product(ID, category, title, description, price, amount);
                 products.push(item);
+                for (let input of document.getElementsByClassName("manualInput")) {
+                    input.value = "";
+                }
                 for (let i in item) {
                     if (item.hasOwnProperty(i)) {
                         let newD = document.createElement("div");
@@ -340,19 +343,19 @@
     <section>
         <input id="devButton" type="button" value="Hide tools" onclick="devTools()" />
         <form id="devTools" style="visibility: visible;">
-            <input id="title" type="text" placeholder="title" /><br />
+            <input id="title" class="manualInput" type="text" placeholder="title" /><br />
             <select id="category" class="categories" value="category">
                 <option value="">Choose a category</option>
                 <option value="food">Food</option>
                 <option value="drink">Drink</option>
             </select>
-            <input id="newCat" type="text" placeholder="Add new category" />
+            <input  id="newCat" type="text" placeholder="Add new category" />
             <input type="button" value="add category"
                 onclick="addNewCat(document.getElementById('newCat').value.toLowerCase())" />
             <br />
-            <input id="desc" type="text" placeholder="description" /><br />
-            <input id="price" type="number" placeholder="price" value="0" min="0" max="9999" /><br />
-            <input id="amount" type="number" placeholder="amount" value="1" min="1" max="99999" /><br />
+            <input id="desc" class="manualInput" type="text" placeholder="description" /><br />
+            <input id="price" class="manualInput" type="number" placeholder="price" value="0" min="0" max="9999" /><br />
+            <input id="amount" class="manualInput" type="number" placeholder="amount" value="1" min="1" max="99999" /><br />
             <input type="button" value="add product"
                 onclick="addProd(document.getElementById('category').value, document.getElementById('title').value, document.getElementById('desc').value, document.getElementById('price').value, document.getElementById('amount').value)" />
                 <span id="productErrors"></span>
