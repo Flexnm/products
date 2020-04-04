@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <!-- create a page to buy products
+    display list of products: in js create product class and an array of products
+    add a button next to each prduct to buy the product. item will be added to a purchase cart.
+    this cart is not shown on the page, but is saved in js. instead display the number of items in the cart. -->
+    <!-- bonus: clicking on the cart icon will display the cart contents -->
+    <style>
+        html {
+            background-color: lightblue;
+
+        }
+
+        input {
+            font-size: 14pt;
+        }
+
+        select {
+            font-size: 14pt;
+        }
+
+        #masterList {
+            display: grid;
+            grid-template-columns: max-content;
+        }
+
+        #list {
+            display: grid;
+            grid-template-columns: max-content max-content max-content max-content max-content max-content max-content 225px;
+            background-color: rgb(236, 139, 139);
+            text-align: center;
+            font-size: 18pt;
+        }
+
+        #page {
+            display: grid;
+            grid-template-columns: min-content max-content;
+            column-gap: 10px;
+        }
+
+        #cart {
+            display: grid;
+            grid-template-columns: min-content min-content min-content min-content min-content;
+            visibility: hidden;
+        }
+
+        #cart div {
+            background-color: rgb(151, 141, 197);
+            text-align: center;
+            padding-right: 10px;
+            padding-left: 10px;
+            border: 1px solid black;
+            font-size: 18pt;
+        }
+
+        #list div {
+
+            padding-right: 10px;
+            padding-left: 10px;
+            border: 1px solid black;
+
+        }
+
+        #cartDisplay {
+            width: 105px;
+        }
+
+        span {
+            font-size: 18pt;
+        }
+
+        #newCat {
+            width: 220px;
+        }
+    </style>
+    <script>
+        let checks = [];
+        let products = [];
+        let bought = [];
+        class Product {
+            constructor(id, category, title, description, price, amount) {
+                this.ID = id;
+                this.Category = category;
+                this.Name = title;
+                this.Description = description;
+                this.Price = price;
+                this.Amount = amount;
+            };
+        };
+
+        class Cart {
+            constructor() {
+                this.Boughtproducts = bought;
+            };
+        };
+
+        var cart = new Cart();
+        var ID = 0;
+
+        function addProd(category, title, description, price, amount) {
+            if (document.getElementById("category").value !== "") {
+                ID++;
+                let item = new Product(ID, category, title, description, price, amount);
+                products.push(item);
+                for (let i in item) {
+                    if (item.hasOwnProperty(i)) {
+                        let newD = document.createElement("div");
+                        newD.className = `product${ID}`;
+                        newD.innerHTML = item[i];
+                        if (i === "Category") {
+                            newD.innerHTML = newD.innerHTML[0].toUpperCase() + newD.innerHTML.slice(1);
+                        }
+                        document.getElementById("list").appendChild(newD);
+                    }
+                }
+                let checker = document.createElement("div");
+                checker.innerHTML = `<input id="check${ID}" type="checkbox" name="to buy" value="to buy" onchange="change(this.id)" />`;
+                checker.className = `product${ID}`
+                let numOfProducts = document.createElement("div");
+                numOfProducts.innerHTML = `<input id="num${ID}" type="number" min="1" max="${amount}" placeholder="Purchases" disabled="" />`;
+                numOfProducts.className = `product${ID}`
+                document.getElementById("list").appendChild(checker);
+                document.getElementById("list").appendChild(numOfProducts);
+                checks = document.getElementsByName('to buy');
+                document.querySelector("style").innerHTML += `.product${ID} { display: block; } `;
+                filter("show all");
+                document.getElementById("filter").value = "show all";
+                let options = document.getElementById("filter").children;
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].value === category) {
+                        options[i].value = "show " + category;
+                    }
+                };
+            } else {
+                let catP = document.getElementById("newCat");
+                catP.setAttribute("placeholder", "Add or select a category!");
+                catP.style.backgroundColor = "salmon";
+                setTimeout(function () {
+                    catP.setAttribute("placeholder", "Add new category");
+                    catP.style.backgroundColor = "white";
+                }, 2000);
+            }
+        };
+
+        function buy() {
+            let oops = 0;
+            let error = false;
+            for (let j = 0; j < checks.length; j++) {
+                if (checks[j].checked) {
+                    let buyNum = document.getElementById("num" + checks[j].id.slice(5));
+                    if (Number(buyNum.value) > Number(buyNum.max)) {
+                        checks[j].checked = false;
+                        change(checks[j].id);
+                        error = true;
+                        oops++;
+                        continue;
+                    }
+                    let exists = false
+                    let product = products[parseInt(checks[j].id.slice(5) - 1)];
+                    (cart.Boughtproducts).forEach(element => {
+                        if (element.ID === product.ID) {
+                            exists = true;
+                        }
+                    });
+                    let cartGrid = document.getElementById("cart");
+                    product.Amount = Number(product.Amount);
+                    if (exists) {
+                        product.Amount += Number(buyNum.value);
+                        document.getElementsByClassName(`content${product.ID}`).item(4).innerHTML = product.Amount;
+                        document.getElementsByClassName(`content${product.ID}`).item(3).innerHTML = product.Price * product.Amount;
+
+                    } else {
+                        cart.Boughtproducts.push(product);
+                        product.Amount = Number(buyNum.value);
+                        for (let i in product) {
+                            if (product.hasOwnProperty(i) && i !== "ID") {
+                                let newD = document.createElement("div");
+                                newD.innerHTML = product[i];
+                                if (i === "Category") {
+                                    newD.innerHTML = newD.innerHTML[0].toUpperCase() + newD.innerHTML.slice(1);
+                                }
+                                if (i === "Price") {
+                                    newD.innerHTML = product.Amount * Number(product.Price);
+                                }
+                                newD.className = `content${product.ID}`;
+                                cartGrid.appendChild(newD);
+                            }
+                        }
+                    }
+                    checks[j].checked = false;
+                    let currAmount = document.getElementsByClassName(`product${product.ID}`).item(5);
+                    currAmount.innerHTML = currAmount.innerHTML - buyNum.value;
+                    buyNum.max = currAmount.innerHTML;
+                    change(checks[j].id)
+                    if (Number(currAmount.innerHTML) == 0) {
+                        checks[j].disabled = true;
+                    }
+                }
+            }
+            if (error) {
+                let bVal = document.getElementById("buyVal");
+                bVal.innerHTML = `You tried to buy more than the existing stock of ${oops} products`;
+                bVal.style.visibility = "visible";
+
+                setTimeout(function () {
+                    bVal.style.visibility = "hidden";
+                }, 3000);
+            }
+        };
+
+        function filter(category) {
+            let styles = document.querySelector("style");
+            let newStyles = styles.innerHTML;
+            products.forEach(element => {
+                if (category === "show all" || category.indexOf("show") == -1) {
+                    newStyles = newStyles.replace(`.product${element.ID} { display: none; }`, `.product${element.ID} { display: block; }`);
+                } else if ("show " + element.Category === category) {
+                    newStyles = newStyles.replace(`.product${element.ID} { display: none; }`, `.product${element.ID} { display: block; }`);
+                } else {
+                    newStyles = newStyles.replace(`.product${element.ID} { display: block; }`, `.product${element.ID} { display: none; }`);;
+                }
+            });
+            styles.innerHTML = newStyles;
+        }
+
+        function showCart(user) {
+            let cartGrid = document.getElementById("cart");
+            if (cartGrid.style.visibility === "visible" && user) {
+                cartGrid.style.visibility = "hidden";
+                document.getElementById("cartDisplay").value = "Show cart";
+                return;
+            } else if (user) {
+                cartGrid.style.visibility = "visible";
+                document.getElementById("cartDisplay").value = "Hide cart";
+            }
+        }
+
+        function devTools() {
+            let dev = document.getElementById("devButton");
+            if (dev.value === "Show tools") {
+                document.getElementById("devTools").style.visibility = "visible";
+                dev.value = "Hide tools";
+            } else {
+                document.getElementById("devTools").style.visibility = "hidden";
+                dev.value = "Show tools"
+            }
+        }
+
+        function addNewCat(newCat) {
+            let selectors = document.getElementsByClassName("categories");
+            let newCategory = document.createElement("option");
+            for (let i = 0; i < selectors.item(0).length; i++) {
+                if (selectors.item(0).item(i).value === newCat) {
+                    document.getElementById("newCat").value = "";
+                    document.getElementById("newCat").setAttribute("placeholder","ADD NEW CATEGORY!");
+                    setTimeout(function() {
+                        document.getElementById("newCat").setAttribute("placeholder","Add new category");
+                    }, 1000);
+                    return;
+                }
+            }
+            newCategory.value = newCat;
+            newCategory.innerHTML = newCat[0].toUpperCase() + newCat.slice(1);
+            selectors.item(0).appendChild(newCategory);
+            selectors.item(1).appendChild(newCategory.cloneNode(true));
+        }
+
+        function change(ID) {
+            let numBox = document.getElementById(`${ID}`);
+            let numNum = document.getElementById("num" + `${ID}`.slice(5));
+            if (numBox.checked) {
+                for (let curDiv of document.getElementsByClassName(numBox.parentElement.className)) {
+                    curDiv.style.backgroundColor = "olive";
+                }
+                numNum.style.backgroundColor = "skyblue";
+                numNum.value = 1;
+                numNum.disabled = false;
+            } else {
+                for (let curDiv of document.getElementsByClassName(numBox.parentElement.className)) {
+                    curDiv.style.backgroundColor = "";
+                }
+                numNum.style.backgroundColor = "white";
+                numNum.value = 0;
+                numNum.disabled = true;
+            }
+        }
+
+        function finalizeBuy() {
+            let pComp = document.getElementById("purchaseComp");
+            if (bought.length > 0) {
+                for (let i = bought.length; i >= 1; i--) {
+                    let removeD = document.getElementsByClassName(`content${i}`);
+                    for (let j = removeD.length - 1; j >= 0; j--) {
+                        removeD.item(j).remove();
+                    }
+                    bought.pop(i);
+                }
+                pComp.innerHTML = "Purchase complete!";
+                pComp.style.visibility = "visible";
+                setTimeout(function () {
+                    pComp.style.visibility = "hidden";
+                }, 3000);
+            } else {
+                pComp.innerHTML = "You cant purchase nothing!";
+                pComp.style.visibility = "visible";
+                setTimeout(function () {
+                    pComp.style.visibility = "hidden";
+                }, 3000);
+            }
+        }
+
+    </script>
+</head>
+
+<body>
+    <section>
+        <input id="devButton" type="button" value="Hide tools" onclick="devTools()" />
+        <form id="devTools" style="visibility: visible;">
+            <input id="title" type="text" placeholder="title" /><br />
+            <select id="category" class="categories" value="category">
+                <option value="">Choose a category</option>
+                <option value="food">Food</option>
+                <option value="drink">Drink</option>
+            </select>
+            <input id="newCat" type="text" placeholder="Add new category"  />
+            <input type="button" value="add category"
+                onclick="addNewCat(document.getElementById('newCat').value.toLowerCase())" />
+            <br />
+            <input id="desc" type="text" placeholder="description" /><br />
+            <input id="price" type="number" placeholder="price" value="0" min="0" /><br />
+            <input id="amount" type="number" placeholder="amount" value="1" min="1" /><br />
+            <input type="button" value="add product"
+                onclick="addProd(document.getElementById('category').value, document.getElementById('title').value, document.getElementById('desc').value, document.getElementById('price').value, document.getElementById('amount').value)" />
+
+        </form>
+    </section>
+    <br /><br /><br /><br />
+    <section id="page">
+        <div>
+            <select id="filter" class="categories" value="category"
+                onchange="filter(document.getElementById('filter').value)">
+                <option value="show all">Choose a category</option>
+                <option value="food">Food</option>
+                <option value="drink">Drink</option>
+            </select><br />
+            <input type="button" value="Buy selected products" onclick="buy()" />
+            <span id="buyVal" style="visibility: hidden;"></span>
+            <div id="masterList">
+                <div id="list">
+                    <div>ID</div>
+                    <div>Category</div>
+                    <div>Title</div>
+                    <div>Description</div>
+                    <div>Price</div>
+                    <div>Amount</div>
+                    <div>Check to buy</div>
+                    <div>Number of products</div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <br style="margin:4.5px" />
+            <input id="cartDisplay" type="button" value="Show cart" onclick="showCart(true)" />
+            <input id="finalBuy" type="button" value="confirm purchase" onclick="finalizeBuy()" />
+            <span id="purchaseComp" style="visibility: hidden;"></span>
+            <div id="cart">
+                <div>Category</div>
+                <div>Title</div>
+                <div>Description</div>
+                <div>Price</div>
+                <div>Amount</div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>
