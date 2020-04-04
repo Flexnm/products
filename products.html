@@ -102,7 +102,7 @@
         var ID = 0;
 
         function addProd(category, title, description, price, amount) {
-            if (category !== "" && price <= 9999 && amount <= 99999 && price >= 0 && amount >= 1) {
+            if (category !== "" && price <= 9999 && amount <= 99999 && price >= 0 && amount >= 1 && typeof(price) === Number && typeof(amount) === Number) {
                 ID++;
                 let item = new Product(ID, category, title, description, price, amount);
                 products.push(item);
@@ -154,7 +154,7 @@
                     catP.setAttribute("placeholder", "Add new category");
                     catP.style.backgroundColor = "white";
                 }, 2000);
-            } else if(price > 9999 || amount > 99999 || price < 0 || amount < 1){
+            } else {
                 document.getElementById("productErrors").innerHTML = "You entered invalid information";
                 setTimeout(function () {
                     document.getElementById("productErrors").innerHTML = "";
