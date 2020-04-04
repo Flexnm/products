@@ -12,7 +12,6 @@
     <style>
         html {
             background-color: lightblue;
-
         }
 
         input {
@@ -62,7 +61,6 @@
             padding-right: 10px;
             padding-left: 10px;
             border: 1px solid black;
-
         }
 
         #cartDisplay {
@@ -77,6 +75,7 @@
             width: 220px;
         }
     </style>
+
     <script>
         let checks = [];
         let products = [];
@@ -102,7 +101,7 @@
         var ID = 0;
 
         function addProd(category, title, description, price, amount) {
-            if (category !== "" && price <= 9999 && amount <= 99999 && price >= 0 && amount >= 1 && typeof(price) === Number && typeof(amount) === Number) {
+            if (category !== "" && price <= 9999 && amount <= 99999 && price >= 0 && amount >= 1 && parseInt(price) === Number(price) && parseInt(amount) == Number(amount)) {
                 ID++;
                 let item = new Product(ID, category, title, description, price, amount);
                 products.push(item);
@@ -127,7 +126,6 @@
                         document.getElementById("list").appendChild(newD);
                     }
                 }
-
                 let checker = document.createElement("div");
                 checker.innerHTML = `<input id="check${ID}" type="checkbox" name="to buy" value="to buy" onchange="change(this.id)" />`;
                 checker.className = `product${ID}`
@@ -146,7 +144,7 @@
                         options[i].value = "show " + category;
                     }
                 };
-            } else if(category === "") {
+            } else if (category === "") {
                 let catP = document.getElementById("newCat");
                 catP.setAttribute("placeholder", "Add or select a category!");
                 catP.style.backgroundColor = "salmon";
@@ -188,7 +186,6 @@
                         product.Amount += Number(buyNum.value);
                         document.getElementsByClassName(`content${product.ID}`).item(4).innerHTML = product.Amount;
                         document.getElementsByClassName(`content${product.ID}`).item(3).innerHTML = product.Price * product.Amount;
-
                     } else {
                         cart.Boughtproducts.push(product);
                         product.Amount = Number(buyNum.value);
@@ -199,7 +196,7 @@
                                 if (i === "Category") {
                                     newD.innerHTML = newD.innerHTML[0].toUpperCase() + newD.innerHTML.slice(1);
                                 }
-                                if (i === "Description" || i=== "Name") {
+                                if (i === "Description" || i === "Name") {
                                     if (product[i].length > 10) {
                                         let dispText = newD.innerHTML.slice(0, 8);
                                         newD.title = newD.innerHTML;
@@ -228,7 +225,6 @@
                 let bVal = document.getElementById("buyVal");
                 bVal.innerHTML = `You tried to buy more than the existing stock of ${oops} products`;
                 bVal.style.visibility = "visible";
-
                 setTimeout(function () {
                     bVal.style.visibility = "hidden";
                 }, 3000);
@@ -349,17 +345,18 @@
                 <option value="food">Food</option>
                 <option value="drink">Drink</option>
             </select>
-            <input  id="newCat" type="text" placeholder="Add new category" />
+            <input id="newCat" type="text" placeholder="Add new category" />
             <input type="button" value="add category"
                 onclick="addNewCat(document.getElementById('newCat').value.toLowerCase())" />
             <br />
             <input id="desc" class="manualInput" type="text" placeholder="description" /><br />
-            <input id="price" class="manualInput" type="number" placeholder="price" value="0" min="0" max="9999" /><br />
-            <input id="amount" class="manualInput" type="number" placeholder="amount" value="1" min="1" max="99999" /><br />
+            <input id="price" class="manualInput" type="number" placeholder="price" value="0" min="0"
+                max="9999" /><br />
+            <input id="amount" class="manualInput" type="number" placeholder="amount" value="1" min="1"
+                max="99999" /><br />
             <input type="button" value="add product"
                 onclick="addProd(document.getElementById('category').value, document.getElementById('title').value, document.getElementById('desc').value, document.getElementById('price').value, document.getElementById('amount').value)" />
-                <span id="productErrors"></span>
-
+            <span id="productErrors"></span>
         </form>
     </section>
     <br /><br /><br /><br />
