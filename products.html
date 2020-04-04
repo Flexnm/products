@@ -36,7 +36,7 @@
 
         #list {
             display: grid;
-            grid-template-columns: max-content max-content max-content max-content max-content max-content max-content 225px;
+            grid-template-columns: max-content max-content 129px max-content max-content max-content max-content 225px;
             background-color: rgb(236, 139, 139);
             text-align: center;
             font-size: 18pt;
@@ -44,7 +44,7 @@
 
         #cart {
             display: grid;
-            grid-template-columns: min-content min-content min-content min-content min-content;
+            grid-template-columns: min-content 129px min-content min-content min-content;
             visibility: hidden;
         }
 
@@ -102,7 +102,7 @@
         var ID = 0;
 
         function addProd(category, title, description, price, amount) {
-            if (document.getElementById("category").value !== "") {
+            if (category !== "" && price <= 9999 && amount <= 99999 && price >= 0 && amount >= 1) {
                 ID++;
                 let item = new Product(ID, category, title, description, price, amount);
                 products.push(item);
@@ -114,8 +114,8 @@
                         if (i === "Category") {
                             newD.innerHTML = newD.innerHTML[0].toUpperCase() + newD.innerHTML.slice(1);
                         }
-                        if(i === "Description"){
-                            if(item[i].length > 10){
+                        if (i === "Description" || i === "Name") {
+                            if (item[i].length > 10) {
                                 let dispText = newD.innerHTML.slice(0, 8);
                                 newD.title = newD.innerHTML;
                                 newD.innerHTML = dispText + "...";
@@ -124,7 +124,7 @@
                         document.getElementById("list").appendChild(newD);
                     }
                 }
-                
+
                 let checker = document.createElement("div");
                 checker.innerHTML = `<input id="check${ID}" type="checkbox" name="to buy" value="to buy" onchange="change(this.id)" />`;
                 checker.className = `product${ID}`
@@ -143,13 +143,18 @@
                         options[i].value = "show " + category;
                     }
                 };
-            } else {
+            } else if(category === "") {
                 let catP = document.getElementById("newCat");
                 catP.setAttribute("placeholder", "Add or select a category!");
                 catP.style.backgroundColor = "salmon";
                 setTimeout(function () {
                     catP.setAttribute("placeholder", "Add new category");
                     catP.style.backgroundColor = "white";
+                }, 2000);
+            } else if(price > 9999 || amount > 99999 || price < 0 || amount < 1){
+                document.getElementById("productErrors").innerHTML = "You entered invalid information";
+                setTimeout(function () {
+                    document.getElementById("productErrors").innerHTML = "";
                 }, 2000);
             }
         };
@@ -190,6 +195,13 @@
                                 newD.innerHTML = product[i];
                                 if (i === "Category") {
                                     newD.innerHTML = newD.innerHTML[0].toUpperCase() + newD.innerHTML.slice(1);
+                                }
+                                if (i === "Description" || i=== "Name") {
+                                    if (product[i].length > 10) {
+                                        let dispText = newD.innerHTML.slice(0, 8);
+                                        newD.title = newD.innerHTML;
+                                        newD.innerHTML = dispText + "...";
+                                    }
                                 }
                                 if (i === "Price") {
                                     newD.innerHTML = product.Amount * Number(product.Price);
@@ -339,10 +351,11 @@
                 onclick="addNewCat(document.getElementById('newCat').value.toLowerCase())" />
             <br />
             <input id="desc" type="text" placeholder="description" /><br />
-            <input id="price" type="number" placeholder="price" value="0" min="0" /><br />
-            <input id="amount" type="number" placeholder="amount" value="1" min="1" /><br />
+            <input id="price" type="number" placeholder="price" value="0" min="0" max="9999" /><br />
+            <input id="amount" type="number" placeholder="amount" value="1" min="1" max="99999" /><br />
             <input type="button" value="add product"
                 onclick="addProd(document.getElementById('category').value, document.getElementById('title').value, document.getElementById('desc').value, document.getElementById('price').value, document.getElementById('amount').value)" />
+                <span id="productErrors"></span>
 
         </form>
     </section>
