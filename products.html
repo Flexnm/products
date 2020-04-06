@@ -68,7 +68,7 @@
         }
 
         span {
-            font-size: 18pt;
+            font-size: 16pt;
         }
 
         #newCat {
@@ -80,6 +80,7 @@
         let checks = [];
         let products = [];
         let bought = [];
+        let allPurchases = 0;
         class Product {
             constructor(id, category, title, description, price, amount) {
                 this.ID = id;
@@ -173,6 +174,7 @@
                         oops++;
                         continue;
                     }
+                    allPurchases += Number(buyNum.value);
                     let exists = false
                     let product = products[parseInt(checks[j].id.slice(5) - 1)];
                     (cart.Boughtproducts).forEach(element => {
@@ -229,7 +231,7 @@
                     bVal.style.visibility = "hidden";
                 }, 3000);
             }
-            console.log(bought);
+            document.getElementById("purchaseComp").innerHTML = `You have ${bought.length} unique products in the cart. You bought ${allPurchases} products in total.`
         };
 
         function filter(category) {
@@ -322,17 +324,16 @@
                     }
                 }
                 pComp.innerHTML = "Purchase complete!";
-                pComp.style.visibility = "visible";
                 setTimeout(function () {
-                    pComp.style.visibility = "hidden";
+                    pComp.innerHTML = `You have ${bought.length} products in the cart.`
                 }, 3000);
             } else {
                 pComp.innerHTML = "You cant purchase nothing!";
-                pComp.style.visibility = "visible";
                 setTimeout(function () {
-                    pComp.style.visibility = "hidden";
+                    pComp.innerHTML = `You have ${bought.length} products in the cart.`
                 }, 3000);
             }
+            allPurchases = 0;
         }
 
     </script>
@@ -390,7 +391,7 @@
             <br style="margin:4.5px" />
             <input id="cartDisplay" type="button" value="Show cart" onclick="showCart(true)" />
             <input id="finalBuy" type="button" value="confirm purchase" onclick="finalizeBuy()" />
-            <span id="purchaseComp" style="visibility: hidden;"></span>
+            <span id="purchaseComp">This is your purchases cart</span>
             <div id="cart">
                 <div>Category</div>
                 <div>Title</div>
