@@ -229,6 +229,7 @@
                     bVal.style.visibility = "hidden";
                 }, 3000);
             }
+            console.log(bought);
         };
 
         function filter(category) {
@@ -311,12 +312,14 @@
         function finalizeBuy() {
             let pComp = document.getElementById("purchaseComp");
             if (bought.length > 0) {
-                for (let i = bought.length; i >= 1; i--) {
-                    let removeD = document.getElementsByClassName(`content${i}`);
-                    for (let j = removeD.length - 1; j >= 0; j--) {
-                        removeD.item(j).remove();
+                for (let i = ID; i >= 1; i--) {
+                    if (document.getElementsByClassName(`content${i}`).item(0) !== null) {
+                        let removeD = document.getElementsByClassName(`content${i}`);
+                        for (let j = removeD.length - 1; j >= 0; j--) {
+                            removeD.item(j).remove();
+                        }
+                        bought.pop(i);
                     }
-                    bought.pop(i);
                 }
                 pComp.innerHTML = "Purchase complete!";
                 pComp.style.visibility = "visible";
